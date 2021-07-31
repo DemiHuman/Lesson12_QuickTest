@@ -27,4 +27,7 @@ Serve report:
 allure serve build/allure-results
 ```
 
+:heart: <a target="_blank" href="https://qa.guru">qa.guru</a><br/>
+:blue_heart: <a target="_blank" href="https://t.me/qa_automation">t.me/qa_automation</a>
+
 
