@@ -1,10 +1,14 @@
 package gov.nasa.mars.tests;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.conditions.Text;
 import gov.nasa.mars.helpers.DriverUtils;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
+
+import java.io.File;
 
 import static com.codeborne.selenide.Selenide.*;
 import static io.qameta.allure.Allure.step;
@@ -18,7 +22,7 @@ public class GeneratedTests extends TestBase {
     @Test
     @Description("Check main menu")
     @DisplayName("Check main menu on the site https://mars.nasa.gov/mars2020/")
-    void generatedTest() {
+    void checkMainMenuTest() {
         step("Open url 'https://mars.nasa.gov/mars2020/'", () ->
                 open(base_url + "/mars2020/"));
 
@@ -50,6 +54,50 @@ public class GeneratedTests extends TestBase {
             $("#lnk_mars").shouldHave(Condition.text("All Mars"));
         });
 
+    }
+
+    @Test
+    @Description("Download Image Test")
+    @DisplayName("Download Image Test")
+    void downloadImageTest() {
+        step("Open url 'https://mars.nasa.gov/resources/26124/ingenuity-images-of-flight-10/'", () ->
+                open(base_url + "/resources/26124/ingenuity-images-of-flight-10/"));
+
+        step("Download image", () -> {
+            File image = $(".download").$(".button").download();
+        });
+    }
+
+    @Test
+    @Description("Image Search by search button")
+    @DisplayName("Image Search by search button")
+    void ImageSearchBySearchBtnTest() {
+        step("Open url 'https://mars.nasa.gov/mars2020/multimedia/images/'", () ->
+                open(base_url + "/mars2020/multimedia/images/"));
+
+        step("Search", () -> {
+            $("#SearchTerm").setValue("ingenuity");
+            $(".searchBtn").click();
+        });
+        step("Check search result", () -> {
+            $(".foundText").shouldHave(Condition.text("images found"));
+        });
+    }
+
+    @Test
+    @Description("Image Search by enter")
+    @DisplayName("Image Search by enter")
+    void ImageSearchByEnterTest() {
+        step("Open url 'https://mars.nasa.gov/mars2020/multimedia/images/'", () ->
+                open(base_url + "/mars2020/multimedia/images/"));
+
+        step("Search", () -> {
+            $("#SearchTerm").setValue("ingenuity");
+            $(".searchBtn").sendKeys(Keys.ENTER);
+        });
+        step("Check search result", () -> {
+            $(".foundText").shouldHave(Condition.text("images found"));
+        });
     }
 
     @Test
