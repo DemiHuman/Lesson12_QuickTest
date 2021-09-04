@@ -1,7 +1,6 @@
 package gov.nasa.mars.tests;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.conditions.Text;
 import gov.nasa.mars.helpers.DriverUtils;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.DisplayName;
@@ -10,19 +9,21 @@ import org.openqa.selenium.Keys;
 
 import java.io.File;
 
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static gov.nasa.mars.helpers.differentUtils.getYearFromString;
 import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class GeneratedTests extends TestBase {
 
-    String base_url = "https://mars.nasa.gov";
+    String base_url = "https://mars.nasa.gov",
+            newUrl = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest";
 
     @Test
-    @Description("Check main menu")
-    @DisplayName("Check main menu on the site https://mars.nasa.gov/mars2020/")
-    void checkMainMenuTest() {
+    @DisplayName("Check main menu on page https://mars.nasa.gov/mars2020/")
+    void MainMenuTest() {
         step("Open url 'https://mars.nasa.gov/mars2020/'", () ->
                 open(base_url + "/mars2020/"));
 
@@ -57,7 +58,6 @@ public class GeneratedTests extends TestBase {
     }
 
     @Test
-    @Description("Download Image Test")
     @DisplayName("Download Image Test")
     void downloadImageTest() {
         step("Open url 'https://mars.nasa.gov/resources/26124/ingenuity-images-of-flight-10/'", () ->
@@ -69,7 +69,6 @@ public class GeneratedTests extends TestBase {
     }
 
     @Test
-    @Description("Image Search by search button")
     @DisplayName("Image Search by search button")
     void ImageSearchBySearchBtnTest() {
         step("Open url 'https://mars.nasa.gov/mars2020/multimedia/images/'", () ->
@@ -85,7 +84,6 @@ public class GeneratedTests extends TestBase {
     }
 
     @Test
-    @Description("Image Search by enter")
     @DisplayName("Image Search by enter")
     void ImageSearchByEnterTest() {
         step("Open url 'https://mars.nasa.gov/mars2020/multimedia/images/'", () ->
@@ -97,6 +95,35 @@ public class GeneratedTests extends TestBase {
         });
         step("Check search result", () -> {
             $(".foundText").shouldHave(Condition.text("images found"));
+        });
+    }
+
+
+    @Test
+    @DisplayName("Checking filter \"date\" on the news page")
+    void dateFilterOfNewsPageTest() {
+        step("Open the news page", () ->
+                open(newUrl));
+
+        step("Choose 2020 year from filter", () -> {
+            $("#date").click();
+            $(byText("2020")).click();
+            sleep(500);
+        });
+
+        step("Show all news on page", () -> {
+            while ($(".more_button").$(".button").exists()) {
+                $(".more_button").$(".button").click();
+                sleep(500);
+            }
+        });
+
+        step("Checking the year of news", () -> {
+            int index = $$(".list_date").size();
+            for (int i = 0; i < index; i++) {
+                if (getYearFromString($$(".list_date").get(i).getText()) != 2020)
+                    throw new Exception("Год отличается от выбранного в фильтре");
+            }
         });
     }
 
